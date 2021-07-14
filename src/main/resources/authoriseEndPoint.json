@@ -1,0 +1,33 @@
+{
+  "max_age": ${max_age},
+  "aud": "${audience}",
+  "scope": "${scope}",
+  "iss": "${client_id}",
+  "claims": {
+    "id_token": {
+      "acr": {
+        "values": [
+          "urn:openbanking:psd2:sca",
+          "urn:openbanking:psd2:ca"
+        ],
+        "essential": true
+      },
+      "openbanking_intent_id": {
+        "value": "${ConsentId}",
+        "essential": true
+      }
+    },
+    "userinfo": {
+      "openbanking_intent_id": {
+        "value": "${ConsentId}",
+        "essential": true
+      }
+    }
+  },
+  "response_type": "${response_type}",
+  "redirect_uri": "${redirecturl}",
+  "state": "${state}",
+  "exp": ${expiration},
+  "nonce": "${nonce}",
+  "client_id": "${client_id}"
+}
