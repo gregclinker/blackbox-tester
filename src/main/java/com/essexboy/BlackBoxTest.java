@@ -33,9 +33,6 @@ public class BlackBoxTest extends BBHttpClient implements Runnable {
         this.httpTestSuite = httpTestSuite;
         this.loadResults = loadResults;
         verbose = httpTestSuite.isVerbose();
-        if (httpTestSuite.getGatewayAlrayanbank().contains("dgateway")) {
-            production = false;
-        }
         logger = LoggerFactory.getLogger(BlackBoxTest.class.getSimpleName() + id);
     }
 
@@ -100,7 +97,6 @@ public class BlackBoxTest extends BBHttpClient implements Runnable {
                     for (NameValuePair nameValuePair : httpTest.getBodyParams()) {
                         String value = nameValuePair.getValue();
                         if (nameValuePair.getValue().equalsIgnoreCase("${getSignedJWT}")) {
-                            //value = alRayanAPIClient.getSignedJWT();
                         }
                         if (nameValuePair.getValue().equalsIgnoreCase("${accessToken}")) {
                             value = httpTestSuite.getAccessToken();

@@ -4,11 +4,10 @@
   "clientId": "miHtDXKbXPlL1At1laWYwb22gsca",
   "clientSecret": "TdmWnbTdYy32UJoG14cRNSkkgf0a",
   "redirectUrl": "https://www.google.com",
-  "gatewayAlrayanbank": "gateway02.alrayanbank.co.uk",
   "httpTests": [
     {
       "description": "get account balance",
-      "url": "https://gateway02.alrayanbank.co.uk/open-banking/v3.1/aisp/accounts/30008346340601/balances",
+      "url": "https://gateway02/open-banking/v3.1/aisp/accounts/30008346340601/balances",
       "method": "GET",
       "expected": {
         "httpStatus": 200

@@ -16,7 +16,6 @@ public class HttpTestSuite {
     @JsonIgnore
     private boolean verbose;
     private String description;
-    private String gatewayAlrayanbank;
     @JsonIgnore
     private String refreshToken;
     @JsonIgnore
@@ -36,9 +35,6 @@ public class HttpTestSuite {
 
     public void setTags() {
         for (HttpTest httpTest : httpTests) {
-            httpTest.setUrl(httpTest.getUrl().replaceAll("\\$\\{gatewayAlrayanbank}", gatewayAlrayanbank));
-        }
-        for (HttpTest httpTest : httpTests) {
             for (BBNameValuePair BBNameValuePair : contstants) {
                 httpTest.setUrl(httpTest.getUrl().replaceAll("\\$\\{" + BBNameValuePair.getName() + "}", BBNameValuePair.getValue()));
             }
@@ -57,7 +53,6 @@ public class HttpTestSuite {
     public String getSummary() {
         return "HttpTestSuite{" + "verbose=" + verbose +
                 ", description='" + description + '\'' +
-                ", gatewayAlrayanbank='" + gatewayAlrayanbank + '\'' +
                 ", refreshToken='" + refreshToken + '\'' +
                 ", clientId='" + clientId + '\'' +
                 ", clientSecret='" + clientSecret + '\'' +

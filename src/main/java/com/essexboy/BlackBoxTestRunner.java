@@ -24,7 +24,7 @@ public class BlackBoxTestRunner {
     private HttpTestSuite httpTestSuite;
     private String inputFile;
     private Map<String, List<LoadTestResult>> loadResults = new ConcurrentHashMap<>();
-    private BBAPIClient alRayanAPIClient;
+    private BBAPIClient bbapiClient;
 
     private Date loadTestStart;
     private int accessTokenReUseCount = 0;
@@ -42,23 +42,12 @@ public class BlackBoxTestRunner {
                 httpTestSuite.setAccessToken(nameValuePair.getValue());
             }
         }
-        alRayanAPIClient = new BBAPIClient(httpTestSuite.getGatewayAlrayanbank(), httpTestSuite.getClientId(), httpTestSuite.getClientSecret(), httpTestSuite.getRedirectUrl(), httpTestSuite.getTokenLifeTimeSeconds());
-        alRayanAPIClient.setVerbose(httpTestSuite.isVerbose());
-        if (httpTestSuite.getGatewayAlrayanbank().contains("dgateway")) {
-            alRayanAPIClient.production = false;
-        }
+        bbapiClient = new BBAPIClient();
+        bbapiClient.setVerbose(httpTestSuite.isVerbose());
         for (HttpTest httpTest : httpTestSuite.getHttpTests()) {
-            httpTest.setUrl(httpTest.getUrl().replaceAll("\\$\\{gatewayAlrayanbank\\}", httpTestSuite.getGatewayAlrayanbank()));
             for (BBNameValuePair constant : httpTestSuite.getContstants()) {
                 httpTest.setUrl(httpTest.getUrl().replaceAll("\\$\\{" + constant.getName() + "\\}", constant.getValue()));
             }
-        }
-    }
-
-    private void resetAccessToken() throws Exception {
-        if (httpTestSuite.getRefreshToken() != null) {
-            String token = alRayanAPIClient.getToken(httpTestSuite.getRefreshToken());
-            httpTestSuite.setAccessToken(token);
         }
     }
 
@@ -179,7 +168,6 @@ public class BlackBoxTestRunner {
 
     public HttpTestSuite runTests() throws Exception {
         System.out.print(httpTestSuite.getSummary());
-        resetAccessToken();
         Random r = new Random();
         loadTestStart = Calendar.getInstance().getTime();
         logger.debug(httpTestSuite.getSummary());
@@ -203,25 +191,5 @@ public class BlackBoxTestRunner {
 
     private boolean isLoadTest() {
         return httpTestSuite.getRepeat() > 1 || httpTestSuite.getThreads() > 1;
-    }
-
-    public void getConsentUrl() throws Exception {
-        System.out.println("consentUrl=" + alRayanAPIClient.getConsentUrl());
-    }
-
-    public void getRefreshToken(String code) throws Exception {
-        String refreshToken = alRayanAPIClient.getRefreshToken(code);
-        System.out.println("\nrefresh token=" + refreshToken);
-        changeRefreshToken(refreshToken);
-    }
-
-    public void changeRefreshToken(String refreshToken) throws IOException {
-        String jsonInput = IOUtils.toString(new FileInputStream(inputFile), Charset.defaultCharset());
-        String newJson = jsonInput.replaceAll("\"refreshToken\": \".*\"", "\"refreshToken\": \"" + refreshToken + "\"");
-        FileUtils.writeStringToFile(new File(inputFile), newJson, Charset.defaultCharset());
-    }
-
-    public void getToken() throws Exception {
-        System.out.println("\naccess token=" + alRayanAPIClient.getToken(httpTestSuite.getRefreshToken()));
     }
 }
