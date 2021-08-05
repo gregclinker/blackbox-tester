@@ -1,5 +1,7 @@
 {
   "verbose": "true",
+  "repeat": 5,
+  "threads": 2,
   "httpTests": [
     {
       "description": "test 1",

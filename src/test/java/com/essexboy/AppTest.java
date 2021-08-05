@@ -34,6 +34,17 @@ public class AppTest {
 
     @Test
     public void test2() throws Exception {
+
+        BlackBoxTestRunner blackBoxTestRunner = new BlackBoxTestRunner(getClass().getResourceAsStream("/testInput.json"));
+        blackBoxTestRunner.runTests();
+        HttpTest httpTest1 = blackBoxTestRunner.getHttpTestSuite().getHttpTests().get(0);
+        assertTrue(httpTest1.isGood());
+
+        System.out.println(blackBoxTestRunner.getHttpTestSuite().getSlice());
+    }
+
+    @Test
+    public void test23() throws Exception {
         List<Integer> list = new ArrayList<>();
         for (int i = 1; i <= 100; i++) {
             list.add(i);
