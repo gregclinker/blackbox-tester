@@ -10,7 +10,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 public class LoadTestResult {
-    private String name;
+    private String testKey;
     private boolean passed;
     private long executionTime;
 }

@@ -1,9 +1,9 @@
 package com.essexboy;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,6 @@ import java.util.List;
 @ToString
 public class Expected {
     private int httpStatus;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
     private List<String> contains = new ArrayList<>();
 }

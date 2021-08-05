@@ -1,0 +1,23 @@
+{
+  "verbose": "false",
+  "repeat": 10000,
+  "threads": 10,
+  "httpTests": [
+    {
+      "description": "test 1",
+      "url": "https://sixty-six-3scale-apicast-production.3scale2.apps.ocp-dev-nvan.dev-globalrelay.net:443/players?user_key=40b295cafdca3025441dd6052b9bc77c",
+      "method": "GET",
+      "expected": {
+        "httpStatus": 200
+      }
+    },
+    {
+      "description": "test 2",
+      "url": "https://sixtysix-user-greg-clinker-sandbox.apps.ocp-dev-nvan.dev-globalrelay.net:443/players",
+      "method": "GET",
+      "expected": {
+        "httpStatus": 200
+      }
+    }
+  ]
+}

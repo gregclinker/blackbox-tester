@@ -1,11 +1,10 @@
 package com.essexboy;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,20 +12,16 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class HttpTest {
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
     List<HttpTestHeader> headers = new ArrayList<>();
     private String description;
     private String url;
     private String method;
     private String body;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private List<BBNameValuePair> bodyParams = new ArrayList<>(2);
     private Expected expected = new Expected();
     private HttpTestResult httpTestResult;
-    @JsonIgnore
-    private boolean withToken = true;
 
     @JsonIgnore
     public boolean isGood() {

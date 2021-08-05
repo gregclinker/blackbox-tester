@@ -1,0 +1,15 @@
+{
+  "verbose": "true",
+  "repeat": 100,
+  "threads": 10,
+  "httpTests": [
+    {
+      "description": "test 1",
+      "url": "https://sixty-six:443/players?user_key=40b295cafdca3025441dd6052b9bc77c",
+      "method": "GET",
+      "expected": {
+        "httpStatus": 200
+      }
+    }
+  ]
+}

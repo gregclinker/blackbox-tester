@@ -1,7 +1,7 @@
 <configuration>
 
     <appender name="DEBUG" class="ch.qos.logback.core.FileAppender">
-        <file>alrayan-blackbox-tester.log</file>
+        <file>blackbox-tester.log</file>
         <encoder>
             <pattern>%date %level %logger{10} %msg%n</pattern>
         </encoder>
@@ -13,7 +13,7 @@
     </appender>
 
     <appender name="ERROR" class="ch.qos.logback.core.FileAppender">
-        <file>alrayan-blackbox-tester-error.log</file>
+        <file>blackbox-tester-error.log</file>
         <encoder>
             <pattern>%date %level %logger{10} %msg%n</pattern>
         </encoder>
@@ -24,7 +24,7 @@
         </filter>
     </appender>
 
-    <root level="debug">
+    <root level="ERROR">
         <appender-ref ref="DEBUG"/>
         <appender-ref ref="ERROR"/>
     </root>

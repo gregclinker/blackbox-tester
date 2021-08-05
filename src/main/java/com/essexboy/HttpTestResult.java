@@ -1,12 +1,14 @@
 package com.essexboy;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @Getter
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonPropertyOrder({"responseStatusCode", "executionTime", "exception", "responseBody"})
 public class HttpTestResult {
     private String responseBody;
     private int responseStatusCode;

@@ -1,49 +1,21 @@
 {
   "verbose": "true",
-  "gatewayAlrayanbank": "wso2dev02.bank.local:9081",
-  "refreshToken": "1585246756581",
-  "contstants": [
-    {
-      "name": "url",
-      "value": "wso2dev02.bank.local:9081"
-    },
-    {
-      "name": "testSetId",
-      "value": "4"
-    }
-  ],
   "httpTests": [
     {
-      "description": "Healthcheck test 1",
-      "url": "http://${gatewayAlrayanbank}/testlogsummary/search/findFirst2ByTestSetUpIdOrderByTestStartTimeDesc?testSetUpId=4",
+      "description": "test 1",
+      "url": "https://api-3scale-apicast-production.3scale2.apps.ocp-dev-nvan.dev-globalrelay.net:443/test?user_key=a640b8e02347e4e23714adb9b4d26509",
       "method": "GET",
       "headers": [
         {
           "name": "header1",
           "value": "value1"
-        },
-        {
-          "name": "header2",
-          "value": "value2"
         }
       ],
       "expected": {
         "httpStatus": 200,
         "contains": [
-          "this this",
-          "and this"
-        ]
-      }
-    },
-    {
-      "description": "Healthcheck test 2",
-      "url": "http://${url}/testlogsummary/search/findFirst2ByTestSetUpIdOrderByTestStartTimeDesc?testSetUpId=${testSetId}",
-      "method": "GET",
-      "expected": {
-        "httpStatus": 200,
-        "contains": [
-          "\"testSetUpId\" : 4",
-          "\"testFunction\" : \"all accounts\""
+          "HTTP_HOST",
+          "HTTP_USER_AGENT"
         ]
       }
     }
