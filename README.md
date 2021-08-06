@@ -1,3 +1,15 @@
+****Black Box Tester****
+
+Build a runnable jar
+
+`mvn clean install`
+
+To run a Test Suite
+
+`java -jar black-box-tester-1.0.jar testInput.json`
+
+where testInput.json looks like:
+```json
 {
   "verbose": "true",
   "repeat": 1,
@@ -23,3 +35,4 @@
     }
   ]
 }
+```
