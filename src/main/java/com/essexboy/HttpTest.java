@@ -1,10 +1,12 @@
 package com.essexboy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,8 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({"description", "url", "method", "headers", "body", "expected", "httpTestResult", "good"})
 public class HttpTest {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
     List<HttpTestHeader> headers = new ArrayList<>();
@@ -23,17 +26,16 @@ public class HttpTest {
     private Expected expected = new Expected();
     private HttpTestResult httpTestResult;
 
-    @JsonIgnore
-    public boolean isGood() {
-        if (httpTestResult != null) {
-            return isGood(httpTestResult);
+    public Boolean isGood() {
+        if (httpTestResult == null) {
+            return null;
         }
-        return false;
+        return isGood(httpTestResult);
     }
 
     @JsonIgnore
     public boolean isGood(HttpTestResult httpTestResult) {
-        boolean ok = true;
+        boolean ok;
         ok = httpTestResult.getResponseStatusCode() == expected.getHttpStatus();
         for (String contains : expected.getContains()) {
             ok = ok && httpTestResult.getResponseBody().contains(contains);

@@ -1,18 +1,18 @@
 package com.essexboy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Getter
-@JsonPropertyOrder({"count", "failed", "passed", "min", "max", "average", "greaterThan1000ms", "lessThan1000ms", "lessThan500ms", "lessThan100ms", "lessThan50ms", "lessThan10ms", "p99", "p90"})
+@JsonPropertyOrder({"count", "failed", "passed", "tps", "min", "max", "average", "greaterThan1000ms", "lessThan1000ms", "lessThan500ms", "lessThan100ms", "lessThan50ms", "lessThan10ms", "p99", "p90"})
 public class TestResults {
     @JsonIgnore
-    private List<LoadTestResult> loadTestResults = Collections.synchronizedList(new ArrayList<>());
+    private final List<LoadTestResult> loadTestResults = Collections.synchronizedList(new ArrayList<>());
 
     public void add(LoadTestResult loadTestResult) {
         loadTestResults.add(loadTestResult);
@@ -23,7 +23,7 @@ public class TestResults {
     }
 
     public Long getPassed() {
-        return loadTestResults.stream().filter(s -> s.isPassed()).count();
+        return loadTestResults.stream().filter(LoadTestResult::isPassed).count();
     }
 
     public Long getFailed() {
@@ -58,28 +58,36 @@ public class TestResults {
         return total / loadTestResults.size() + "ms";
     }
 
+    public String getTPS() {
+        Long total = 0L;
+        for (LoadTestResult loadTestResult : loadTestResults) {
+            total += loadTestResult.getExecutionTime();
+        }
+        return String.format("%d", (loadTestResults.size() / (total / 1000))) + "tps";
+    }
+
     public String getGreaterThan1000ms() {
-        return getGreaterThanMs(1000l);
+        return getGreaterThanMs(1000L);
     }
 
     public String getLessThan1000ms() {
-        return getLessThanMs(1000l);
+        return getLessThanMs(1000L);
     }
 
     public String getLessThan500ms() {
-        return getLessThanMs(500l);
+        return getLessThanMs(500L);
     }
 
     public String getLessThan100ms() {
-        return getLessThanMs(100l);
+        return getLessThanMs(100L);
     }
 
     public String getLessThan50ms() {
-        return getLessThanMs(50l);
+        return getLessThanMs(50L);
     }
 
     public String getLessThan10ms() {
-        return getLessThanMs(10l);
+        return getLessThanMs(10L);
     }
 
     public String getP99() {

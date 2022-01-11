@@ -1,16 +1,3 @@
-****Black Box Tester****
-
-Build a runnable jar
-
-`mvn clean install`
-
-To run a Test Suite
-
-`java -jar black-box-tester-1.0.jar testInput.json`
-
-where testInput.json looks like:
-
-```yaml
 ---
 verbose: true
 repeat: 1
@@ -43,4 +30,3 @@ httpTests:
     body: '{"name":"Tenali Ramakrishna","gender":"male","email":"tenali.ramakrishna@15ce.com","status":"active"}'
     expected:
       httpStatus: 401
-```

@@ -1,26 +1,28 @@
 package com.essexboy;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import lombok.Getter;
-import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class BlackBoxTestRunner {
 
     final static Logger logger = LoggerFactory.getLogger(BlackBoxTestRunner.class);
 
-    private HttpTestSuite httpTestSuite;
+    private final HttpTestSuite httpTestSuite;
+    private final TestReport testReport;
+    private final BBHttpClient bbHttpClient = new BBHttpClient();
     private String inputFile;
-    private TestReport testReport;
-    private BBHttpClient bbHttpClient = new BBHttpClient();
 
     public BlackBoxTestRunner(String inputFile) throws Exception {
         this(new FileInputStream(inputFile));
@@ -28,8 +30,9 @@ public class BlackBoxTestRunner {
     }
 
     public BlackBoxTestRunner(InputStream inputStream) throws Exception {
-        String jsonInput = IOUtils.toString(inputStream, Charset.defaultCharset());
-        httpTestSuite = new ObjectMapper().readValue(jsonInput, HttpTestSuite.class);
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        httpTestSuite = mapper.readValue(inputStream, HttpTestSuite.class);
         testReport = new TestReport(httpTestSuite);
         bbHttpClient.setVerbose(httpTestSuite.isVerbose());
     }
@@ -38,9 +41,8 @@ public class BlackBoxTestRunner {
         testReport.report();
     }
 
-    public HttpTestSuite runTests() throws Exception {
+    public void runTests() throws Exception {
         System.out.print(httpTestSuite.getSummary() + "\n");
-        Random r = new Random();
         logger.debug(httpTestSuite.getSummary());
         List<Thread> threads = new ArrayList<>();
         for (int i = 0; i < httpTestSuite.getThreads(); i++) {
@@ -49,7 +51,9 @@ public class BlackBoxTestRunner {
             Thread thread = new Thread(blackBoxTest);
             threads.add(thread);
         }
-        System.out.println(httpTestSuite.getProgressBar());
+        if (httpTestSuite.isLoadTest()) {
+            System.out.println(httpTestSuite.getProgressBar());
+        }
         for (Thread thread : threads) {
             thread.start();
         }
@@ -57,6 +61,5 @@ public class BlackBoxTestRunner {
             thread.join();
         }
         System.out.println("\nfinished all threads");
-        return httpTestSuite;
     }
 }

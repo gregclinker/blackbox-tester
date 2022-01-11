@@ -57,13 +57,11 @@ public class BBHttpClient {
         if (verbose) {
             System.out.println("\n" + request);
             System.out.println("headers [");
-            stream(request.getAllHeaders()).forEach(e -> {
-                System.out.println("\t" + e.getName() + " : " + e.getValue());
-            });
+            stream(request.getAllHeaders()).forEach(e -> System.out.println("\t" + e.getName() + " : " + e.getValue()));
             System.out.println("]");
             if (params != null) {
                 System.out.println("body params [");
-                params.stream().forEach(e -> System.out.println("\t" + e.getName() + " : " + e.getValue()));
+                params.forEach(e -> System.out.println("\t" + e.getName() + " : " + e.getValue()));
                 System.out.println("]");
             }
         }

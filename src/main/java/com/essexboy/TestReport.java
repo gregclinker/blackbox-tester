@@ -1,10 +1,9 @@
 package com.essexboy;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -13,25 +12,29 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
-@JsonPropertyOrder({"startTime", "finishTime", "loadResults", "testSuite"})
+@JsonPropertyOrder({"startTime", "finishTime", "loadResults", "testSuite", "results"})
 public class TestReport {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private final Map<String, TestResults> results = new ConcurrentHashMap<>();
     protected HttpTestSuite testSuite;
     protected Date startTime;
     protected Date finishTime;
-    private Map<String, TestResults> results = new ConcurrentHashMap<>();
 
     public TestReport(HttpTestSuite testSuite) {
         startTime = Calendar.getInstance().getTime();
         this.testSuite = testSuite;
     }
 
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public Map<String, TestResults> getResults() {
-        SortedMap<String, TestResults> sortedMap = new TreeMap<>();
-        for (HttpTest httpTest : testSuite.getHttpTests()) {
-            sortedMap.put(httpTest.getDescription(), results.get(httpTest.getDescription()));
+        if (testSuite.isLoadTest()) {
+            SortedMap<String, TestResults> sortedMap = new TreeMap<>();
+            for (HttpTest httpTest : testSuite.getHttpTests()) {
+                sortedMap.put(httpTest.getDescription(), results.get(httpTest.getDescription()));
+            }
+            return sortedMap;
         }
-        return sortedMap;
+        return null;
     }
 
     public void add(HttpTest httpTest, HttpTestResult httpTestResult) {

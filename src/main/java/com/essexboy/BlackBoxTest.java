@@ -2,6 +2,7 @@ package com.essexboy;
 
 import lombok.Setter;
 import lombok.SneakyThrows;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
@@ -39,7 +40,7 @@ public class BlackBoxTest extends BBHttpClient implements Runnable {
                 count++;
                 if (httpTestSuite.isVerbose()) {
                     System.out.print("\ntread " + id + ", running : " + httpTest.getSummary());
-                } else if (count % httpTestSuite.getSlice() == 0) {
+                } else if (count % httpTestSuite.getSlice() == 0 && httpTestSuite.isLoadTest()) {
                     System.out.print("*");
                 }
                 try {
@@ -51,12 +52,15 @@ public class BlackBoxTest extends BBHttpClient implements Runnable {
                     }
                     httpTestResult.setException(e.getMessage());
                 }
-                testReport.add(httpTest, httpTestResult);
-                logger.debug(httpTest.getSummary() + " in " + httpTestResult.getExecutionTime() + "ms" + ", status=" + httpTestResult.getResponseStatusCode());
-                if (httpTestResult.getResponseStatusCode() != 200) {
-                    logger.error(httpTest + "\n" + httpTestResult);
+                if (httpTestSuite.isLog()) {
+                    logger.debug(httpTest.getSummary() + " in " + httpTestResult.getExecutionTime() + "ms" + ", status=" + httpTestResult.getResponseStatusCode());
+                    if (httpTestResult.getResponseStatusCode() != httpTest.getExpected().getHttpStatus()) {
+                        logger.error(httpTest + "\n" + httpTestResult);
+                    }
                 }
-                if (!httpTestSuite.isLoadTest()) {
+                if (httpTestSuite.isLoadTest()) {
+                    testReport.add(httpTest, httpTestResult);
+                } else {
                     httpTest.setHttpTestResult(httpTestResult);
                 }
             }
@@ -64,7 +68,7 @@ public class BlackBoxTest extends BBHttpClient implements Runnable {
     }
 
     private HttpTestResult runTest(HttpTest httpTest) throws Exception {
-        HttpRequestBase request = null;
+        HttpRequestBase request;
         List<NameValuePair> params = null;
         switch (httpTest.getMethod()) {
             case "GET":
@@ -79,6 +83,9 @@ public class BlackBoxTest extends BBHttpClient implements Runnable {
             default:
                 throw new RuntimeException("invalid method : " + httpTest.getMethod());
         }
+        for (Header header : httpTest.getHeaders()) {
+            request.addHeader(header);
+        }
         log(request, params);
         long start = System.currentTimeMillis();
         HttpResponse response = execute(request);
@@ -86,11 +93,6 @@ public class BlackBoxTest extends BBHttpClient implements Runnable {
         String responseBody = null;
         try {
             responseBody = EntityUtils.toString(response.getEntity());
-            responseBody = responseBody.replaceAll("^\\{\\s+", "{").
-                    replaceAll("\\s+\\}$", "}".
-                            replaceAll("\\r\\s+", "").
-                            replaceAll("\\s+:\\s+", ":").
-                            replaceAll("\\s+\\{", "{"));
         } catch (Exception e) {
             //do nothing
         }
